@@ -3,306 +3,249 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ranking</title>
+<title>CRM Leads</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{
-  --glass: rgba(255,255,255,.12);
-  --border: rgba(255,255,255,.25);
-  --txt: #fff;
-  --primary: #4dabf7;
+* { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+body {
+    background: #0b0f1a;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+.container { max-width: 1100px; margin: auto; }
 
-body{
-  min-height:100vh;
-  font-family:'Inter','Segoe UI',sans-serif;
-  background:url('background.jpg') center/cover fixed no-repeat;
-  color:var(--txt);
-}
-
-.overlay{
-  min-height:100vh;
-  background:rgba(0,0,0,.7);
-  backdrop-filter:blur(18px);
-  padding:24px 14px 40px;
+.card {
+    background: #11162a;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 0 25px rgba(0,255,255,.15);
+    margin-bottom: 25px;
+    animation: fade .4s ease;
 }
 
-.container{
-  max-width:1100px;
-  margin:auto;
-  display:grid;
-  gap:24px;
+@keyframes fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.card{
-  background:var(--glass);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:20px;
-  backdrop-filter:blur(28px);
-  box-shadow:0 25px 50px rgba(0,0,0,.45);
+@keyframes removeRow {
+    to { opacity: 0; transform: translateX(-20px); height: 0; }
 }
 
-.title{
-  text-align:center;
-  font-size:22px;
-  letter-spacing:2px;
-  margin-bottom:14px;
-  text-transform:uppercase;
+input, button {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
 }
 
-.title span{
-  padding:6px 18px;
-  border-radius:8px;
-  background:linear-gradient(90deg,#ffffff33,#ffffff10);
+input {
+    background: #0b0f1a;
+    color: #fff;
+    border: 1px solid #00f7ff55;
 }
 
-.actions{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  flex-wrap:wrap;
+button {
+    cursor: pointer;
+    background: linear-gradient(135deg, #00f7ff, #00c4cc);
+    font-weight: 600;
 }
 
-input,button{
-  padding:12px 14px;
-  border-radius:12px;
-  border:none;
-  background:rgba(255,255,255,.18);
-  color:white;
-  font-size:14px;
-  outline:none;
+button:hover { box-shadow: 0 0 15px #00f7ff; }
+
+.reset {
+    background: #ff3b3b;
+    margin-bottom: 10px;
 }
 
-input{
-  min-width:160px;
+.form { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.rankings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 20px;
 }
 
-button{
-  font-weight:600;
-  cursor:pointer;
-  transition:.25s ease;
+table { width: 100%; border-collapse: collapse; }
+td { padding: 10px; }
+tr { border-bottom: 1px solid #ffffff15; }
+
+.remove {
+    background: #ff3b3b;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
 }
 
-button:hover{
-  background:rgba(255,255,255,.35);
-  transform:translateY(-1px);
-}
+.editable { cursor: pointer; }
 
-button:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-button.primary{
-  background:rgba(77,171,247,.6);
-}
-button.primary:hover{
-  background:rgba(77,171,247,.9);
-}
-
-button.danger{
-  background:rgba(220,53,69,.6);
-}
-button.danger:hover{
-  background:rgba(220,53,69,.95);
-}
-
-.rankings{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:24px;
-}
-@media(max-width:850px){
-  .rankings{grid-template-columns:1fr}
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,td{
-  padding:12px;
-  text-align:center;
-}
-
-th{
-  background:rgba(255,255,255,.2);
-}
-
-.top1{background:linear-gradient(135deg,#ffd70055,#ffd70022)}
-.top2{background:linear-gradient(135deg,#cfd8dc44,#cfd8dc22)}
-.top3{background:linear-gradient(135deg,#ff8f0044,#ff8f0022)}
-
-.medal{
-  font-size:20px;
-  margin-right:6px;
-}
+.top1 td { color: gold; }
+.top2 td { color: silver; }
+.top3 td { color: #cd7f32; }
 </style>
 </head>
 
 <body>
-<div class="overlay">
 <div class="container">
 
 <div class="card">
-  <div class="title"><span>Adicionar Leads</span></div>
-  <div class="actions">
-    <input id="nome" placeholder="Nome">
-    <input id="leads" type="number" min="1" placeholder="Qtd. Leads">
-    <button id="btnAdd" class="primary">Adicionar</button>
-  </div>
+    <h2>Adicionar Lead</h2>
+    <div class="form">
+        <input id="nome" placeholder="Nome do Lead">
+        <input id="qtd" type="number" placeholder="Quantidade">
+        <button id="btnAdd">Adicionar</button>
+    </div>
 </div>
 
 <div class="rankings">
 
 <div class="card">
-  <div class="title"><span>Ranking Diário</span></div>
-  <div class="actions">
-    <button class="danger" id="resetDia">Resetar Dia</button>
-  </div>
-  <table>
-    <thead><tr><th>#</th><th>Nome</th><th>Leads</th></tr></thead>
-    <tbody id="rankingDia"></tbody>
-  </table>
+    <h3>🏆 Ranking Diário</h3>
+    <button class="reset" onclick="resetar('dia')">Resetar</button>
+    <table><tbody id="rankingDia"></tbody></table>
 </div>
 
 <div class="card">
-  <div class="title"><span>Ranking Mensal</span></div>
-  <div class="actions">
-    <button class="danger" id="resetMes">Resetar Mês</button>
-  </div>
-  <table>
-    <thead><tr><th>#</th><th>Nome</th><th>Leads</th></tr></thead>
-    <tbody id="rankingMes"></tbody>
-  </table>
+    <h3>🔥 Ranking Semanal</h3>
+    <button class="reset" onclick="resetar('semana')">Resetar</button>
+    <table><tbody id="rankingSemana"></tbody></table>
 </div>
 
+<div class="card">
+    <h3>📅 Ranking Mensal</h3>
+    <button class="reset" onclick="resetar('mes')">Resetar</button>
+    <table><tbody id="rankingMes"></tbody></table>
 </div>
+
 </div>
 </div>
 
 <script>
-/* ===== SUPABASE ===== */
 const supabaseClient = supabase.createClient(
   "https://ugyybmztaoopyetyrsit.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVneXlibXp0YW9vcHlldHlyc2l0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgzMTczNDQsImV4cCI6MjA4Mzg5MzM0NH0.dLtrsK7XQNwM1DGMo-vv8llqZT5ajLKByfZIKLMOwgg"
 );
 
-/* ===== ELEMENTOS ===== */
 const nomeInput = document.getElementById("nome");
-const leadsInput = document.getElementById("leads");
-const btnAdd = document.getElementById("btnAdd");
-const resetDia = document.getElementById("resetDia");
-const resetMes = document.getElementById("resetMes");
-const rankingDia = document.getElementById("rankingDia");
-const rankingMes = document.getElementById("rankingMes");
+const qtdInput = document.getElementById("qtd");
 
-/* ===== EVENTOS ===== */
-btnAdd.onclick = adicionar;
-resetDia.onclick = resetarDia;
-resetMes.onclick = resetarMes;
+document.getElementById("btnAdd").onclick = adicionar;
 
-/* ===== FUNÇÕES ===== */
-async function adicionar(){
-  const nome = nomeInput.value.trim();
-  const qtd = Number(leadsInput.value);
+async function adicionar() {
+    const nome = nomeInput.value.trim();
+    const qtd = Number(qtdInput.value);
 
-  if(!nome || qtd <= 0){
-    alert("Preencha corretamente os dados");
-    return;
-  }
+    if (!nome || qtd <= 0) return alert("Preencha corretamente");
 
-  btnAdd.disabled = true;
+    const { data, error } = await supabaseClient
+        .from("ranking")
+        .select("*")
+        .eq("nome", nome)
+        .maybeSingle();
 
-  const { data } = await supabaseClient
-    .from("ranking")
-    .select("*")
-    .eq("nome", nome)
-    .maybeSingle();
+    if (error) return alert("Erro ao buscar lead");
 
-  if(data){
-    await supabaseClient
-      .from("ranking")
-      .update({
-        leads_dia: data.leads_dia + qtd,
-        leads_mes: data.leads_mes + qtd
-      })
-      .eq("id", data.id);
-  } else {
-    await supabaseClient
-      .from("ranking")
-      .insert({
-        nome,
-        leads_dia: qtd,
-        leads_mes: qtd
-      });
-  }
+    if (data) {
+        await supabaseClient.from("ranking").update({
+            leads_dia: (data.leads_dia || 0) + qtd,
+            leads_semana: (data.leads_semana || 0) + qtd,
+            leads_mes: (data.leads_mes || 0) + qtd
+        }).eq("id", data.id);
+    } else {
+        await supabaseClient.from("ranking").insert({
+            nome,
+            leads_dia: qtd,
+            leads_semana: qtd,
+            leads_mes: qtd
+        });
+    }
 
-  nomeInput.value = "";
-  leadsInput.value = "";
-  btnAdd.disabled = false;
+    nomeInput.value = "";
+    qtdInput.value = "";
+    carregar();
 }
 
-/* ✅ RESET VIA RPC (FUNCIONA COM RLS) */
-async function resetarDia(){
-  if(!confirm("Deseja resetar o ranking diário?")) return;
-
-  const { error } = await supabaseClient.rpc("resetar_ranking_dia");
-  if(error){
-    console.error(error);
-    alert("Erro ao resetar dia");
-  }
+function linha(p, i, campo) {
+    const medalha = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "";
+    return `
+    <tr data-id="${p.id}" class="${i < 3 ? `top${i+1}` : ""}">
+        <td>${medalha} ${i + 1}</td>
+        <td contenteditable class="editable">${p.nome}</td>
+        <td>${p[campo] || 0}</td>
+        <td><button class="remove">X</button></td>
+    </tr>`;
 }
 
-async function resetarMes(){
-  if(!confirm("Deseja resetar o ranking mensal?")) return;
+async function carregar() {
+    const { data } = await supabaseClient.from("ranking").select("*");
+    if (!data) return;
 
-  const { error } = await supabaseClient.rpc("resetar_ranking_mes");
-  if(error){
-    console.error(error);
-    alert("Erro ao resetar mês");
-  }
+    render("Dia", "leads_dia", data);
+    render("Semana", "leads_semana", data);
+    render("Mes", "leads_mes", data);
 }
 
-function linha(p,i,campo){
-  const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":"";
-  const cls = i===0?"top1":i===1?"top2":i===2?"top3":"";
-  return `
-  <tr class="${cls}">
-    <td>${i+1}</td>
-    <td>${medal?`<span class="medal">${medal}</span>`:""}${p.nome}</td>
-    <td>${p[campo]}</td>
-  </tr>`;
+function render(tipo, campo, data) {
+    document.getElementById("ranking" + tipo).innerHTML =
+        [...data]
+        .sort((a, b) => (b[campo] || 0) - (a[campo] || 0))
+        .map((p, i) => linha(p, i, campo))
+        .join("");
 }
 
-async function carregar(){
-  const { data } = await supabaseClient.from("ranking").select("*");
-  if(!data) return;
+async function resetar(tipo) {
+    if (!confirm("Deseja resetar este ranking?")) return;
 
-  rankingDia.innerHTML = [...data]
-    .sort((a,b)=>b.leads_dia-a.leads_dia)
-    .map((p,i)=>linha(p,i,"leads_dia")).join("");
+    const rpcMap = {
+        dia: "resetar_ranking_dia",
+        semana: "resetar_ranking_semana",
+        mes: "resetar_ranking_mes"
+    };
 
-  rankingMes.innerHTML = [...data]
-    .sort((a,b)=>b.leads_mes-a.leads_mes)
-    .map((p,i)=>linha(p,i,"leads_mes")).join("");
+    const { error } = await supabaseClient.rpc(rpcMap[tipo], {});
+
+    if (error) {
+        console.error(error);
+        alert("Erro ao resetar ranking");
+        return;
+    }
+
+    carregar();
 }
 
-/* ===== REALTIME ===== */
-supabaseClient
-  .channel("rt-ranking")
-  .on("postgres_changes",{event:"*",schema:"public",table:"ranking"},carregar)
-  .subscribe();
+
+document.addEventListener("click", async e => {
+    if (e.target.classList.contains("remove")) {
+        const tr = e.target.closest("tr");
+        const id = tr.dataset.id;
+
+        tr.style.animation = "removeRow .3s forwards";
+        setTimeout(async () => {
+            await supabaseClient.from("ranking").delete().eq("id", id);
+            carregar();
+        }, 300);
+    }
+});
+
+document.addEventListener("blur", async e => {
+    if (e.target.classList.contains("editable")) {
+        const tr = e.target.closest("tr");
+        const id = tr.dataset.id;
+        await supabaseClient.from("ranking")
+            .update({ nome: e.target.innerText.trim() })
+            .eq("id", id);
+        carregar();
+    }
+}, true);
 
 carregar();
 </script>
-
-
 </body>
 </html>
