@@ -427,6 +427,18 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
   box-shadow:0 0 0 3px rgba(59,130,246,.10);
 }
 
+/* ✅ NOVO: edição de números (Gestão + Admin) */
+.editable-num{
+  cursor:text;
+  border-radius:10px;
+  padding:0 4px;
+}
+.editable-num:focus{
+  outline:none;
+  background:rgba(59,130,246,.10);
+  box-shadow:0 0 0 3px rgba(59,130,246,.10);
+}
+
 .top1 td{ color:#fbbf24; }
 .top2 td{ color:#e5e7eb; }
 .top3 td{ color:#fb923c; }
@@ -809,7 +821,7 @@ body.light .rdlink{
 <div id="login">
   <div class="card glass login-card">
     <h2>Acesso ao CRM</h2>
-    <p>Escolha seu perfil para entrar.</p
+    <p>Escolha seu perfil para entrar.</p>
     <p>Em Fase de Testes, Duvidas (51) 99725-8384</p>
     <div class="login-actions">
       <button onclick="entrarSDR()">Entrar como SDR</button>
@@ -850,8 +862,6 @@ body.light .rdlink{
           <input id="nome" placeholder="Ex: João Silva" autocomplete="off" inputmode="text">
         </div>
         <div class="field" style="min-width:180px; flex:1;">
-          <label for="qtd">Quantidade</label>
-          <input id="qtd" type="number" placeholder="Ex: 3" inputmode="numeric">
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
             <button type="button" class="btn-secondary miniBtn quickAdd" data-q="1">+1</button>
             <button type="button" class="btn-secondary miniBtn quickAdd" data-q="3">+3</button>
@@ -859,6 +869,9 @@ body.light .rdlink{
             <button type="button" class="btn-secondary miniBtn quickAdd" data-q="10">+10</button>
             <button type="button" class="btn-secondary miniBtn quickAdd" data-q="15">+15</button>
           </div>
+          <label for="qtd">Quantidade</label>
+          <input id="qtd" type="number" placeholder="Ex: 3" inputmode="numeric">
+         
         </div>
         <div class="field" style="min-width:170px; flex:0;">
           <label>&nbsp;</label>
@@ -1110,6 +1123,25 @@ body.light .rdlink{
           <label>&nbsp;</label>
           <button class="btn-secondary" id="btnRelatorioMes" type="button" style="width:240px;">Baixar relatório do mês</button>
         </div>
+      </div>
+
+      <hr class="sep">
+
+      <!-- ✅ NOVO: Ajustes (editar nome + números) -->
+      <h4>✏️ Ajustes do Ranking (Leads)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70px">#</th>
+              <th>SDR</th>
+              <th style="width:110px">Dia</th>
+              <th style="width:110px">Semana</th>
+              <th style="width:110px">Mês</th>
+            </tr>
+          </thead>
+          <tbody id="gestaoRankingLeads"></tbody>
+        </table>
       </div>
 
       <hr class="sep">
@@ -1525,6 +1557,10 @@ function linha(p, i, campo) {
   const medalha = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "";
   const valor = (p[campo] || 0);
 
+  const numAttrs = (perfil === "admin")
+    ? `class="countnum editable-num" contenteditable="true" spellcheck="false" data-campo="${campo}"`
+    : `class="countnum"`;
+
   return `
   <tr data-id="${p.id}" class="${i < 3 ? `top${i+1}` : ""}">
     <td style="width:70px">${medalha} ${i + 1}</td>
@@ -1532,7 +1568,7 @@ function linha(p, i, campo) {
     <td contenteditable class="editable">${p.nome}</td>
 
     <td class="countcell" style="width:110px;">
-      <span class="countnum">${valor}</span>
+      <span ${numAttrs}>${valor}</span>
       <button class="inc" type="button" title="Adicionar +1 lead" aria-label="Adicionar 1 lead">＋</button>
     </td>
 
@@ -1557,6 +1593,10 @@ async function carregarRanking() {
   render("Semana", "leads_semana", filtrado);
   render("Mes", "leads_mes", filtrado);
 
+  if (perfil === "admin" && activeView === "gestao") {
+    renderGestaoRankingLeads();
+  }
+
   markUpdated();
 }
 
@@ -1570,6 +1610,36 @@ function render(tipo, campo, data) {
     rows
       .map((p, i) => linha(p, i, campo))
       .join("");
+}
+
+/* ✅ NOVO: render ajustes do ranking na Gestão */
+function renderGestaoRankingLeads(){
+  const tbody = $("gestaoRankingLeads");
+  if (!tbody) return;
+  if (perfil !== "admin") return;
+
+  const data = Array.isArray(window.__rankingCache) ? window.__rankingCache : [];
+  const rows = [...data]
+    .filter(p => !String(p.nome || "").startsWith("__REMOVIDO__"))
+    .sort((a,b)=> (b.leads_mes||0) - (a.leads_mes||0));
+
+  tbody.innerHTML = rows.length
+    ? rows.map((p,i)=>`
+      <tr data-id="${p.id}" class="${i<3?`top${i+1}`:""}">
+        <td style="width:70px">${i===0?"🥇":i===1?"🥈":i===2?"🥉":""} ${i+1}</td>
+        <td contenteditable class="editable">${p.nome || ""}</td>
+        <td style="width:110px; ">
+          <span class="editable-num" contenteditable="true" spellcheck="false" data-campo="leads_dia">${p.leads_dia || 0}</span>
+        </td>
+        <td style="width:110px; ">
+          <span class="editable-num" contenteditable="true" spellcheck="false" data-campo="leads_semana">${p.leads_semana || 0}</span>
+        </td>
+        <td style="width:110px; ">
+          <span class="editable-num" contenteditable="true" spellcheck="false" data-campo="leads_mes">${p.leads_mes || 0}</span>
+        </td>
+      </tr>
+    `).join("")
+    : `<tr><td colspan="5" style="padding:12px; color:rgba(238,242,255,.60);">Sem dados.</td></tr>`;
 }
 
 /* ✅ NOVO: desfazer do +1 */
@@ -1801,6 +1871,99 @@ document.addEventListener("blur", async e => {
     if (novo.startsWith("__REMOVIDO__")) return;
     atualizarNomeDebounced(id, novo);
   }
+}, true);
+
+/* ✅ NOVO: editar números (Gestão + admin) */
+const __allowedCampos = new Set(["leads_dia","leads_semana","leads_mes"]);
+
+function __periodFromCampo(campo){
+  return campo === "leads_dia" ? "dia" : campo === "leads_semana" ? "semana" : "mes";
+}
+
+const atualizarNumeroDebounced = debounce(async (id, campo, novoValor, delta, sdrName) => {
+  if (!__allowedCampos.has(campo)) return;
+
+  const payload = {};
+  payload[campo] = novoValor;
+
+  const { error } = await withLoading(
+    supabaseClient.from("ranking").update(payload).eq("id", id)
+  );
+
+  if (error) {
+    alert("Erro ao atualizar número: " + (error.message || ""));
+    return;
+  }
+
+  await logEvent({
+    action: "ranking_set",
+    sdr: sdrName || "",
+    delta: delta,
+    period: __periodFromCampo(campo),
+    origin: "inline_edit_num"
+  });
+
+  await withLoading(carregarRanking());
+  if (perfil === "admin" && activeView === "gestao") await withLoading(atualizarDashboardGestao());
+  toast("Número atualizado");
+}, 250);
+
+document.addEventListener("focusin", (e)=>{
+  if (e.target && e.target.classList && e.target.classList.contains("editable-num")) {
+    e.target.dataset.old = (e.target.innerText || "").trim();
+  }
+});
+
+document.addEventListener("keydown", (e)=>{
+  if (e.target && e.target.classList && e.target.classList.contains("editable-num")) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.target.blur();
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      const old = (e.target.dataset.old || "").trim();
+      if (old !== "") e.target.innerText = old;
+      e.target.blur();
+    }
+  }
+}, true);
+
+document.addEventListener("blur", async (e)=>{
+  if (!(e.target && e.target.classList && e.target.classList.contains("editable-num"))) return;
+  if (perfil !== "admin") return;
+
+  const tr = e.target.closest("tr");
+  const id = tr?.dataset?.id;
+  const campo = e.target.dataset.campo;
+
+  if (!id || !campo || !__allowedCampos.has(campo)) return;
+
+  const raw = (e.target.innerText || "").trim();
+  const sanitized = String(raw).replace(/[^\d-]/g,"");
+  let novo = parseInt(sanitized, 10);
+
+  const oldRaw = (e.target.dataset.old || "").trim();
+  const oldSan = String(oldRaw).replace(/[^\d-]/g,"");
+  let oldVal = parseInt(oldSan, 10);
+
+  if (isNaN(oldVal)) oldVal = 0;
+
+  if (isNaN(novo)) {
+    e.target.innerText = String(oldVal);
+    return;
+  }
+
+  novo = Math.max(0, novo);
+
+  if (novo === oldVal) {
+    e.target.innerText = String(novo);
+    return;
+  }
+
+  const sdrName = (tr.querySelector(".editable")?.innerText || "").trim();
+
+  atualizarNumeroDebounced(id, campo, novo, (novo - oldVal), sdrName);
 }, true);
 
 /* LEADS VIRADOS */
@@ -2116,6 +2279,7 @@ async function atualizarDashboardGestao(){
         </tr>`).join("")
       : `<tr><td colspan="4" style="padding:12px; color:rgba(238,242,255,.60);">Sem registros no mês.</td></tr>`;
 
+  renderGestaoRankingLeads();
   await atualizarComparativosGestao();
   await carregarAuditLog();
 }
@@ -2536,11 +2700,7 @@ nomeInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAdd").cli
 qtdInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAdd").click(); });
 sdrViradoInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAddVirado").click(); });
 valorViradoInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAddVirado").click(); });
-
-
 </script>
-
 
 </body>
 </html>
-
