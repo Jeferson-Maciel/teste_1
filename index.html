@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRM Leads</title>
+<title>RANKING ARG</title>
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="apple-touch-icon" href="logo.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,6 +65,8 @@ body{
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
   background-position: center, center, center, center;
   background-size: cover, cover, cover, cover;
+
+  color-scheme: dark;
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -295,6 +301,107 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
   background:var(--accent);
 }
 
+/* ✅ NOVO: célula do número com botão à direita */
+.countcell{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  overflow:visible !important; /* evita cortar o efeito */
+}
+
+.countnum{
+  font-weight:900;
+  min-width:22px;
+  text-align:right;
+}
+
+/* ✅ NOVO: botão + chamativo (override do button padrão) */
+.inc{
+  width:24px;
+  height:24px;
+  padding:0;
+  border-radius:8px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  font-weight:900;
+  line-height:1;
+  background:rgba(42, 15, 15, 0);
+  color:#eaf2ff;
+  border:1px solid rgba(59, 131, 246, 0);
+
+  box-shadow:
+    0 10px 10px rgba(0,0,0,.18),
+    0 0 0 0 rgba(59,130,246,.0);
+
+  transition: transform .10s ease, box-shadow .12s ease, filter .12s ease;
+}
+
+.inc:hover{
+  transform: translateY(-1px) scale(1.04);
+  filter: brightness(1.06);
+  box-shadow:
+    0 12px 12px rgba(0,0,0,.22),
+    0 0 0 6px rgba(59,130,246,.10);
+}
+
+.inc:active{
+  transform: translateY(0px) scale(.98);
+}
+
+/* ✅ EFEITO ao clicar (POP + GLOW) */
+.inc.hit{
+  animation: incPop .42s ease-out;
+  box-shadow:
+    0 10px 12px rgba(0,0,0,.28),
+    0 0 0 10px rgba(59,130,246,.16),
+    0 0 12px rgba(59,130,246,.25);
+}
+
+.countcell.hit{
+  animation: cellFlash .55s ease-out;
+}
+
+.countcell.hit::after{
+  content:"+1";
+  position:absolute;
+  right:44px;
+  top:50%;
+  transform: translateY(-50%);
+  font-weight:900;
+  font-size:12px;
+  color:#cfe2ff;
+  text-shadow: 0 10px 22px rgba(0,0,0,.35);
+  animation: floatUp .65s ease-out forwards;
+  pointer-events:none;
+}
+
+@keyframes incPop{
+  0%   { transform: scale(.92); }
+  35%  { transform: scale(1.16); }
+  100% { transform: scale(1.00); }
+}
+
+@keyframes cellFlash{
+  0%   { background: rgba(59,130,246,.00); }
+  20%  { background: rgba(59,130,246,.12); }
+  100% { background: rgba(59,130,246,.00); }
+}
+
+@keyframes floatUp{
+  0%   { opacity:0; transform: translateY(-50%) translateX(0) scale(.92); }
+  15%  { opacity:1; }
+  100% { opacity:0; transform: translateY(-110%) translateX(-4px) scale(1.05); }
+}
+
+/* respeita prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  .inc.hit, .countcell.hit, .countcell.hit::after{ animation:none !important; }
+}
+
 .remove{
   background:rgba(239,68,68,.10);
   color:#ffd6d6;
@@ -369,6 +476,7 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
 }
 .collapse-wrap.open{ max-height:820px; }
 
+/* TOAST */
 .toast{
   position:fixed;
   right:14px;
@@ -383,6 +491,22 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
   box-shadow:0 18px 40px rgba(0,0,0,.35);
   display:none;
 }
+.toast .toast-wrap{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.toast .toast-action{
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:900;
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.12);
+  cursor:pointer;
+}
+.toast .toast-action:hover{ box-shadow:0 10px 18px rgba(0,0,0,.14); }
 
 /* ✅ NOVO: abas (Operação vs Dashboard) */
 .tabs{
@@ -436,6 +560,20 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
   font-size:12px;
 }
 
+/* ✅ NOVO: botões pequenos */
+.miniBtn{
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:900;
+  min-height:unset !important;
+  line-height:1.1;
+}
+
+/* ✅ NOVO: modo foco */
+body.focusmode .focus-hide{ display:none !important; }
+body.focusmode #cardDia{ grid-column: 1 / -1; }
+
 /* ✅ acessibilidade: aumenta alvo em mobile */
 @media (max-width:560px){
   body{ padding:12px; }
@@ -444,6 +582,223 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
   button{ min-height:44px; }
   .tabbtn{ min-height:44px; }
 }
+
+/* ✅ NOVO: TEMA CLARO */
+body.light{
+  --bg:#f6f7fb;
+  --bg2:#eef2ff;
+  --surface:#ffffff;
+  --surface2:#f7f8ff;
+  --border:rgba(15,23,42,.14);
+  --border2:rgba(15,23,42,.10);
+  --text:#0b1220;
+  --muted:rgba(15,23,42,.72);
+  --muted2:rgba(15,23,42,.55);
+  --shadow:0 10px 26px rgba(0,0,0,.10);
+  color-scheme: light;
+}
+
+body.light{
+  background-color:#f6f7fb;
+  background-image:
+    radial-gradient(1200px 700px at 18% -10%, rgba(59,130,246,.14), transparent 60%),
+    radial-gradient(900px 520px at 95% 10%, rgba(34,211,238,.08), transparent 55%),
+    radial-gradient(1000px 600px at 50% 115%, rgba(99,102,241,.10), transparent 60%),
+    linear-gradient(180deg, #f6f7fb 0%, #eef2ff 100%);
+}
+
+body.light .badge{
+  background:rgba(15,23,42,.03);
+  border:1px solid rgba(15,23,42,.10);
+  color:var(--muted);
+}
+
+body.light .card{
+  background:linear-gradient(180deg, rgba(255, 255, 255, 0.83), rgba(159, 168, 207, 0.173));
+  border:1px solid rgba(15,23,42,.10);
+  box-shadow:var(--shadow);
+}
+
+body.light input{
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(15,23,42,.14);
+  color:var(--text);
+}
+body.light input::placeholder{ color:rgba(15,23,42,.40); }
+
+body.light .table-wrap{
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(15,23,42,.12);
+}
+
+body.light thead th{
+  background:rgba(255,255,255,.96);
+  border-bottom:1px solid rgba(15,23,42,.10);
+  color:rgba(15,23,42,.70);
+}
+
+body.light tbody tr{ border-bottom:1px solid rgba(15,23,42,.08); }
+body.light tbody tr:hover{ background:rgba(15,23,42,.03); }
+
+body.light .btn-secondary{
+  background:rgba(15,23,42,.03);
+  border:1px solid rgba(15,23,42,.12);
+  color:var(--text);
+}
+
+body.light .toast{
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(15,23,42,.12);
+  color:rgba(15,23,42,.88);
+}
+body.light .toast .toast-action{
+  background:rgba(15,23,42,.03);
+  border:1px solid rgba(15,23,42,.12);
+  color:var(--text);
+}
+
+body.light .rdlink{ color:#2563eb; }
+body.light .inc{ color:#0b1220; }
+body.light .dot{ box-shadow:0 0 0 3px rgba(59,130,246,.18); }
+
+/* ✅ PATCH: TEMA CLARO (MAIS CONTRASTE + ACESSIBILIDADE)
+   Cole este bloco NO FIM do <style> para sobrescrever o tema claro atual.
+*/
+body.light{
+  /* deixa os textos “muted” mais legíveis no fundo claro */
+  --muted: rgba(15,23,42,.82);
+  --muted2: rgba(15,23,42,.72);
+
+  /* bordas mais visíveis no branco */
+  --border: rgba(15,23,42,.18);
+  --border2: rgba(15,23,42,.14);
+}
+
+/* Tipos pequenos (labels/notes) mais legíveis */
+body.light label{
+  color: rgba(15,23,42,.80);
+  font-weight: 700;
+  font-size: 12px;
+}
+body.light .smallnote{
+  color: rgba(15,23,42,.78);
+}
+
+/* Badges e pills (KPIs) — no seu CSS base estavam “claros demais” pro tema branco */
+body.light .badge{
+  background: rgba(37, 99, 235, .10);
+  border: 1px solid rgba(15,23,42,.14);
+  color: rgba(15,23,42,.80);
+}
+body.light .pill{
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(15,23,42,.14);
+  color: rgba(15,23,42,.82);
+}
+body.light .pill strong{
+  color: var(--text);
+}
+
+/* Cards: melhora separação visual (pouco mais de contraste) */
+body.light .card{
+  border: 1px solid rgba(15,23,42,.14);
+}
+body.light .card h4{
+  color: rgba(15,23,42,.78);
+}
+
+/* Inputs: foco mais evidente */
+body.light input{
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(15,23,42,.18);
+}
+body.light input:focus{
+  border-color: rgba(6, 26, 67, 0.55);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.14);
+}
+body.light input::placeholder{
+  color: rgba(15,23,42,.48);
+}
+
+/* Tabelas: cabeçalho e hover com contraste melhor */
+body.light .table-wrap{
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(15,23,42,.14);
+}
+body.light thead th{
+  background: rgba(243,246,255,.98);
+  border-bottom: 1px solid rgba(15,23,42,.14);
+  color: rgba(15,23,42,.82);
+}
+body.light tbody tr{
+  border-bottom: 1px solid rgba(15,23,42,.10);
+}
+body.light tbody tr:hover{
+  background: rgba(37,99,235,.06);
+}
+
+/* Abas: mais “clique” visual e leitura */
+body.light .tabbtn{
+  background: rgba(255,255,255,.86);
+  border: 1px solid rgba(15,23,42,.16);
+  color: rgba(15,23,42,.86);
+}
+body.light .tabbtn.active{
+  background: rgba(37,99,235,.10);
+  border-color: rgba(37,99,235,.36);
+  color: rgba(15,23,42,.92);
+}
+
+/* Botões de perigo (Reset / Remover) — no branco o texto estava “lavado” */
+body.light .reset,
+body.light .remove{
+  background: rgba(239,68,68,.10);
+  color: #7f1d1d;
+  border: 1px solid rgba(239,68,68,.30);
+}
+body.light .reset:hover,
+body.light .remove:hover{
+  box-shadow: 0 10px 18px rgba(239,68,68,.12);
+}
+
+/* Botão +1 (inc) — antes ficava quase invisível no tema claro */
+body.light .inc{
+  background: rgba(37,99,235,.10);
+  border: 1px solid rgba(37,99,235,.26);
+  color: #1e3a8a;
+  box-shadow: 0 8px 12px rgba(15,23,42,.10);
+}
+body.light .inc:hover{
+  box-shadow:
+    0 12px 16px rgba(15,23,42,.12),
+    0 0 0 6px rgba(37,99,235,.10);
+}
+body.light .inc.hit{
+  box-shadow:
+    0 12px 16px rgba(15,23,42,.14),
+    0 0 0 10px rgba(37,99,235,.16),
+    0 0 12px rgba(37,99,235,.22);
+}
+/* “+1” flutuante: no tema claro estava muito claro */
+body.light .countcell.hit::after{
+  color: #051133;
+  text-shadow: none;
+}
+
+/* Top 3: cores mais escuras (melhor contraste no fundo branco) */
+body.light tr.top1{ background: rgba(245,158,11,.10); }
+body.light tr.top2{ background: rgba(148,163,184,.12); }
+body.light tr.top3{ background: rgba(249,115,22,.10); }
+
+body.light .top1 td{ color:#92400e; font-weight:900; }
+body.light .top2 td{ color:#1f2937; font-weight:900; }
+body.light .top3 td{ color:#9a3412; font-weight:900; }
+
+/* Link RD: um pouco mais forte no claro */
+body.light .rdlink{
+  color: #d81d1d;
+}
+
 </style>
 </head>
 
@@ -477,6 +832,8 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
       <div class="badges" style="margin-left:6px;">
         <div class="badge" id="badgePerfil"><span class="dot"></span>Perfil: —</div>
         <div class="badge" id="badgeStatus"><span class="dot"></span>Status: pronto</div>
+        <div class="badge" id="badgeAtualizado"><span class="dot"></span>Atualizado: —</div>
+        <button class="btn-secondary miniBtn" id="btnTheme" type="button" title="Alternar tema" aria-label="Alternar tema">☀️ Claro</button>
       </div>
     </div>
   </div>
@@ -494,6 +851,13 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
         <div class="field" style="min-width:180px; flex:1;">
           <label for="qtd">Quantidade</label>
           <input id="qtd" type="number" placeholder="Ex: 3" inputmode="numeric">
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <button type="button" class="btn-secondary miniBtn quickAdd" data-q="1">+1</button>
+            <button type="button" class="btn-secondary miniBtn quickAdd" data-q="3">+3</button>
+            <button type="button" class="btn-secondary miniBtn quickAdd" data-q="5">+5</button>
+            <button type="button" class="btn-secondary miniBtn quickAdd" data-q="10">+10</button>
+            <button type="button" class="btn-secondary miniBtn quickAdd" data-q="15">+15</button>
+          </div>
         </div>
         <div class="field" style="min-width:170px; flex:0;">
           <label>&nbsp;</label>
@@ -502,9 +866,33 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
       </div>
     </div>
 
+    <!-- ✅ NOVO: Busca/Filtro/Modo foco/Export -->
+    <div class="card glass">
+      <h2>Ações rápidas</h2>
+      <div class="form">
+        <div class="field" style="min-width:260px; flex:2;">
+          <label for="searchSdr">Buscar SDR…</label>
+          <input id="searchSdr" placeholder="Digite para filtrar o ranking" autocomplete="off" inputmode="search">
+        </div>
+        <div class="field" style="min-width:170px; flex:0;">
+          <label>&nbsp;</label>
+          <button class="btn-secondary" id="btnTopToggle" type="button" style="width:170px;">Mostrar Top 10</button>
+        </div>
+        <div class="field" style="min-width:170px; flex:0;">
+          <label>&nbsp;</label>
+          <button class="btn-secondary" id="btnFocusMode" type="button" style="width:170px;">Modo foco</button>
+        </div>
+        <div class="field admin-only" style="min-width:170px; flex:0;">
+          <label>&nbsp;</label>
+          <button class="btn-secondary" id="btnExportOperacao" type="button" style="width:170px;">Baixar CSV</button>
+        </div>
+      </div>
+      <div class="smallnote">Atalhos: <strong>/</strong> foca busca • <strong>Esc</strong> limpa • <strong>Alt+F</strong> alterna foco</div>
+    </div>
+
     <div class="grid">
 
-      <div class="card glass">
+      <div class="card glass" id="cardDia">
         <h3>🏆 Ranking Diário</h3>
         <button class="reset admin-only" onclick="resetar('dia')">Resetar</button>
         <div class="table-wrap">
@@ -512,7 +900,7 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
         </div>
       </div>
 
-      <div class="card glass">
+      <div class="card glass focus-hide">
         <h3>🔥 Ranking Semanal</h3>
         <button class="reset admin-only" onclick="resetar('semana')">Resetar</button>
         <div class="table-wrap">
@@ -520,7 +908,7 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
         </div>
       </div>
 
-      <div class="card glass">
+      <div class="card glass focus-hide">
         <h3>📅 Ranking Mensal</h3>
         <button class="reset admin-only" onclick="resetar('mes')">Resetar</button>
         <div class="table-wrap">
@@ -528,7 +916,7 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
         </div>
       </div>
 
-      <div class="card glass fullwidth">
+      <div class="card glass fullwidth focus-hide">
         <h3>💰 Ranking (Leads Virados / Faturamento do Mês)</h3>
 
         <div class="kpi">
@@ -624,7 +1012,6 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
   <div class="view" id="viewGestao" role="tabpanel" aria-labelledby="tabGestao">
     <div class="card glass">
       <h2>Dashboard (Gestão)</h2>
-      
 
       <div class="dash-grid" style="margin-top:12px;">
         <div class="card glass" style="margin:0;">
@@ -654,6 +1041,44 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
 
       <hr class="sep">
 
+      <!-- ✅ NOVO: Comparativos automáticos -->
+      <h4>📊 Comparativos automáticos</h4>
+      <div class="dash-grid" style="margin-top:10px;">
+        <div class="card glass" style="margin:0;">
+          <div class="dash-kpi">
+            <div class="label">Leads hoje vs ontem</div>
+            <div class="value" id="cmpLeadsHoje">—</div>
+            <div class="sub" id="cmpLeadsHojeSub">—</div>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin:0;">
+          <div class="dash-kpi">
+            <div class="label">Leads semana vs passada</div>
+            <div class="value" id="cmpLeadsSemana">—</div>
+            <div class="sub" id="cmpLeadsSemanaSub">—</div>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin:0;">
+          <div class="dash-kpi">
+            <div class="label">Leads mês Atual vs passado</div>
+            <div class="value" id="cmpLeadsMes">—</div>
+            <div class="sub" id="cmpLeadsMesSub">—</div>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin:0;">
+          <div class="dash-kpi">
+            <div class="label">Faturamento mês atual vs passado</div>
+            <div class="value" id="cmpFatMes">—</div>
+            <div class="sub" id="cmpFatMesSub">—</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="sep">
+
       <h4>📌 Ranking (mês) – visão Gestão</h4>
       <div class="table-wrap">
         <table>
@@ -669,14 +1094,32 @@ tbody tr:hover{ background:rgba(255,255,255,.03); }
         </table>
       </div>
 
-      
+      <!-- ✅ NOVO: Exportações -->
+      <div class="form" style="margin-top:12px;">
+        <div class="field" style="min-width:220px; flex:0;">
+          <label>&nbsp;</label>
+          <button class="btn-secondary" id="btnCsvRanking" type="button" style="width:220px;">Exportar ranking (CSV)</button>
+        </div>
+        <div class="field" style="min-width:220px; flex:0;">
+          <label>&nbsp;</label>
+          <button class="btn-secondary" id="btnCsvVirados" type="button" style="width:220px;">Exportar virados (CSV)</button>
+        </div>
+
+        <div class="field" style="min-width:240px; flex:0;">
+          <label>&nbsp;</label>
+          <button class="btn-secondary" id="btnRelatorioMes" type="button" style="width:240px;">Baixar relatório do mês</button>
+        </div>
+      </div>
+
+      <hr class="sep">
+
     </div>
   </div>
 
 </div>
 
 <script>
-const SENHA_ADM = "654321";
+const SENHA_ADM = "123456";
 let perfil = null;
 
 const supabaseClient = supabase.createClient(
@@ -686,17 +1129,112 @@ const supabaseClient = supabase.createClient(
 
 const $ = (id) => document.getElementById(id);
 const badgeStatus = $("badgeStatus");
+const badgeAtualizado = $("badgeAtualizado");
 const toastEl = $("toast");
+
+/* ✅ NOVO: tema (claro/escuro) */
+function setTheme(mode){
+  const m = (mode === "light") ? "light" : "dark";
+  document.body.classList.toggle("light", m === "light");
+  localStorage.setItem("crm_theme", m);
+  const b = $("btnTheme");
+  if (b) b.textContent = (m === "light") ? "🌙 Escuro" : "☀️ Claro";
+}
+function toggleTheme(){
+  const isLight = document.body.classList.contains("light");
+  setTheme(isLight ? "dark" : "light");
+}
+function initTheme(){
+  const saved = localStorage.getItem("crm_theme");
+  if (saved){
+    setTheme(saved);
+  } else {
+    const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+    setTheme(prefersLight ? "light" : "dark");
+  }
+  const b = $("btnTheme");
+  if (b) b.addEventListener("click", toggleTheme);
+}
+initTheme();
+
+/* ✅ NOVO: cache */
+window.__rankingCache = [];
+window.__viradosResumoCache = window.__viradosResumoCache || [];
+
+let lastUpdatedAt = 0;
+
+function fmtAgo(ms){
+  const s = Math.floor(ms / 1000);
+  if (s < 2) return "agora";
+  if (s < 60) return `há ${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `há ${m}min`;
+  const h = Math.floor(m / 60);
+  return `há ${h}h`;
+}
+
+function renderUpdatedBadge(){
+  if (!badgeAtualizado) return;
+  if (!lastUpdatedAt){
+    badgeAtualizado.innerHTML = `<span class="dot"></span>Atualizado: —`;
+    return;
+  }
+  badgeAtualizado.innerHTML = `<span class="dot"></span>Atualizado: ${fmtAgo(Date.now() - lastUpdatedAt)}`;
+}
+
+function markUpdated(){
+  lastUpdatedAt = Date.now();
+  renderUpdatedBadge();
+}
+
+/* atualiza o “há Xs” sem recarregar dados */
+setInterval(renderUpdatedBadge, 1000);
 
 let inFlight = 0;
 function setStatus(txt){
   badgeStatus.innerHTML = `<span class="dot"></span>Status: ${txt}`;
 }
-function toast(msg){
-  toastEl.textContent = msg;
+
+/* ✅ NOVO: toast com ação (Desfazer) */
+let __toastAction = null;
+let __toastTimer = null;
+
+function escapeHtml(s){
+  return String(s || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+function toast(msg, opts){
+  opts = opts || {};
+  const duration = Number(opts.duration || 2200);
+
+  if (opts.action && opts.actionLabel){
+    __toastAction = opts.action;
+    toastEl.innerHTML = `<div class="toast-wrap"><span>${escapeHtml(msg)}</span><button type="button" class="toast-action" id="toastActionBtn">${escapeHtml(opts.actionLabel)}</button></div>`;
+    const btn = toastEl.querySelector("#toastActionBtn");
+    if (btn){
+      btn.onclick = async () => {
+        const fn = __toastAction;
+        __toastAction = null;
+        toastEl.style.display = "none";
+        try{ if (fn) await fn(); }catch(e){}
+      };
+    }
+  } else {
+    __toastAction = null;
+    toastEl.textContent = msg;
+  }
+
   toastEl.style.display = "block";
-  clearTimeout(window.__toastTimer);
-  window.__toastTimer = setTimeout(()=>toastEl.style.display="none", 2200);
+  clearTimeout(__toastTimer);
+  __toastTimer = setTimeout(()=>{
+    toastEl.style.display="none";
+    __toastAction = null;
+  }, duration);
 }
 
 /* ✅ CORREÇÃO: supabase retorna "thenable" (query builder) que não tem .finally()
@@ -716,6 +1254,41 @@ async function withLoading(promiseLike){
 function debounce(fn, ms){
   let t;
   return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+}
+
+/* ✅ NOVO: “usuário” local (sem autenticação) */
+function getUserLabel(){
+  const k = "crm_user_label";
+  let v = localStorage.getItem(k);
+  if (!v){
+    v = "sessao-" + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem(k, v);
+  }
+  return v;
+}
+
+/* ✅ NOVO: Audit log */
+async function logEvent(ev){
+  try{
+    const payload = Object.assign({
+      actor_perfil: perfil,
+      actor_usuario: getUserLabel(),
+      created_client_at: new Date().toISOString(),
+      view: activeView
+    }, ev || {});
+    const { error } = await supabaseClient.from("ranking_events").insert(payload);
+    if (error) {}
+  }catch(err){}
+}
+
+function fmtDateTimeBR(dt){
+  try{
+    const d = new Date(dt);
+    if (isNaN(d.getTime())) return String(dt || "");
+    return d.toLocaleString("pt-BR");
+  }catch(e){
+    return String(dt || "");
+  }
 }
 
 /* ✅ ABAS: Operação x Gestão */
@@ -768,6 +1341,93 @@ function initTabs(){
 }
 initTabs();
 
+/* ✅ NOVO: busca + top10 */
+let rankingFilter = "";
+let showTop10 = false;
+
+function applyFilterAndTop(arr){
+  let out = Array.isArray(arr) ? arr : [];
+  if (rankingFilter){
+    const q = rankingFilter.toLowerCase();
+    out = out.filter(p => String(p.nome || "").toLowerCase().includes(q));
+  }
+  if (showTop10) out = out.slice(0, 10);
+  return out;
+}
+
+function initSearchAndTop(){
+  const input = $("searchSdr");
+  const btn = $("btnTopToggle");
+  if (input){
+    input.addEventListener("input", () => {
+      rankingFilter = (input.value || "").trim();
+      render("Dia", "leads_dia", window.__rankingCache);
+      render("Semana", "leads_semana", window.__rankingCache);
+      render("Mes", "leads_mes", window.__rankingCache);
+    });
+  }
+  if (btn){
+    btn.addEventListener("click", () => {
+      showTop10 = !showTop10;
+      btn.textContent = showTop10 ? "Mostrar todos" : "Mostrar Top 10";
+      render("Dia", "leads_dia", window.__rankingCache);
+      render("Semana", "leads_semana", window.__rankingCache);
+      render("Mes", "leads_mes", window.__rankingCache);
+    });
+  }
+}
+initSearchAndTop();
+
+/* ✅ NOVO: modo foco */
+function setFocusMode(on){
+  document.body.classList.toggle("focusmode", !!on);
+  localStorage.setItem("crm_focusmode", on ? "1" : "0");
+  const b = $("btnFocusMode");
+  if (b) b.textContent = on ? "Sair do foco" : "Modo foco";
+}
+
+function initFocusMode(){
+  const saved = localStorage.getItem("crm_focusmode") === "1";
+  setFocusMode(saved);
+  const b = $("btnFocusMode");
+  if (b){
+    b.addEventListener("click", () => {
+      const next = !document.body.classList.contains("focusmode");
+      setFocusMode(next);
+    });
+  }
+}
+initFocusMode();
+
+/* ✅ NOVO: atalhos teclado (/ foca busca, Esc limpa, Alt+F foco) */
+document.addEventListener("keydown", (e)=>{
+  const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+  const isTyping = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
+
+  if (!isTyping && e.key === "/"){
+    const s = $("searchSdr");
+    if (s){
+      e.preventDefault();
+      s.focus();
+    }
+  }
+  if (e.key === "Escape"){
+    const s = $("searchSdr");
+    if (s && document.activeElement === s){
+      s.value = "";
+      rankingFilter = "";
+      render("Dia", "leads_dia", window.__rankingCache);
+      render("Semana", "leads_semana", window.__rankingCache);
+      render("Mes", "leads_mes", window.__rankingCache);
+      s.blur();
+    }
+  }
+  if (e.altKey && (e.key === "f" || e.key === "F")){
+    e.preventDefault();
+    setFocusMode(!document.body.classList.contains("focusmode"));
+  }
+});
+
 /* Histórico */
 const PAGE_SIZE = 5;
 let historicoPage = 1;
@@ -800,6 +1460,7 @@ function iniciar() {
   }
 
   carregar();
+  startRealtime();
 }
 
 /* RANKINGS */
@@ -807,9 +1468,19 @@ const nomeInput = $("nome");
 const qtdInput = $("qtd");
 $("btnAdd").onclick = () => withLoading(adicionar());
 
-async function adicionar() {
+/* ✅ NOVO: adicionar rápido (+1/+5/+10) */
+document.querySelectorAll(".quickAdd").forEach(btn=>{
+  btn.addEventListener("click", async ()=>{
+    const q = Number(btn.getAttribute("data-q") || "0");
+    if (!q || q <= 0) return;
+    qtdInput.value = String(q);
+    await withLoading(adicionar("quick_btn", q));
+  });
+});
+
+async function adicionar(originOverride, qtdOverride) {
   const nome = nomeInput.value.trim();
-  const qtd = Number(qtdInput.value);
+  const qtd = Number(qtdOverride || qtdInput.value);
   if (!nome || qtd <= 0) return alert("Preencha corretamente");
 
   const { data, error: selErr } = await supabaseClient
@@ -834,6 +1505,14 @@ async function adicionar() {
     if (error) return alert("Erro ao inserir: " + (error.message || ""));
   }
 
+  await logEvent({
+    action: "ranking_add",
+    sdr: nome,
+    delta: qtd,
+    period: "dia|semana|mes",
+    origin: originOverride || "manual_form"
+  });
+
   nomeInput.value = "";
   qtdInput.value = "";
   await carregarRanking();
@@ -843,11 +1522,19 @@ async function adicionar() {
 
 function linha(p, i, campo) {
   const medalha = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : "";
+  const valor = (p[campo] || 0);
+
   return `
   <tr data-id="${p.id}" class="${i < 3 ? `top${i+1}` : ""}">
     <td style="width:70px">${medalha} ${i + 1}</td>
+
     <td contenteditable class="editable">${p.nome}</td>
-    <td style="width:70px; font-weight:900;">${p[campo] || 0}</td>
+
+    <td class="countcell" style="width:110px;">
+      <span class="countnum">${valor}</span>
+      <button class="inc" type="button" title="Adicionar +1 lead" aria-label="Adicionar 1 lead">＋</button>
+    </td>
+
     ${perfil === "admin" ? `<td style="width:60px"><button class="remove" type="button">X</button></td>` : ""}
   </tr>`;
 }
@@ -863,18 +1550,72 @@ async function carregarRanking() {
   }
 
   const filtrado = (Array.isArray(data) ? data : []).filter(p => !String(p.nome || "").startsWith("__REMOVIDO__"));
+  window.__rankingCache = filtrado;
 
   render("Dia", "leads_dia", filtrado);
   render("Semana", "leads_semana", filtrado);
   render("Mes", "leads_mes", filtrado);
+
+  markUpdated();
 }
 
 function render(tipo, campo, data) {
+  let rows = [...(Array.isArray(data) ? data : [])]
+    .sort((a, b) => (b[campo] || 0) - (a[campo] || 0));
+
+  rows = applyFilterAndTop(rows);
+
   $("ranking" + tipo).innerHTML =
-    [...data]
-      .sort((a, b) => (b[campo] || 0) - (a[campo] || 0))
+    rows
       .map((p, i) => linha(p, i, campo))
       .join("");
+}
+
+/* ✅ NOVO: desfazer do +1 */
+let lastUndo = null;
+
+async function doUndoRanking(undo){
+  if (!undo) return;
+  if (Date.now() > undo.expiresAt) return;
+
+  const { id, delta } = undo;
+
+  const { data, error: selErr } = await withLoading(
+    supabaseClient
+      .from("ranking")
+      .select("id,nome,leads_dia,leads_semana,leads_mes")
+      .eq("id", id)
+      .maybeSingle()
+  );
+
+  if (selErr || !data) return;
+
+  const nextDia = Math.max(0, (data.leads_dia || 0) - delta);
+  const nextSem = Math.max(0, (data.leads_semana || 0) - delta);
+  const nextMes = Math.max(0, (data.leads_mes || 0) - delta);
+
+  const { error } = await withLoading(
+    supabaseClient
+      .from("ranking")
+      .update({ leads_dia: nextDia, leads_semana: nextSem, leads_mes: nextMes })
+      .eq("id", id)
+  );
+
+  if (error) return;
+
+  await logEvent({
+    action: "ranking_undo",
+    sdr: data.nome || undo.sdrName || "",
+    delta: -delta,
+    period: "dia|semana|mes",
+    origin: "toast_undo"
+  });
+
+  lastUndo = null;
+
+  await withLoading(carregarRanking());
+  if (perfil === "admin" && activeView === "gestao") await withLoading(atualizarDashboardGestao());
+  toast("Desfeito");
 }
 
 async function resetar(tipo) {
@@ -899,14 +1640,103 @@ async function resetar(tipo) {
     return;
   }
 
+  await logEvent({
+    action: "ranking_reset",
+    sdr: "",
+    delta: 0,
+    period: tipo,
+    origin: "btn_reset"
+  });
+
   await withLoading(carregarRanking());
   toast("Ranking resetado");
 }
 
-/* ✅ EXCLUIR (ranking) com fallback */
+/* ✅ EXCLUIR (ranking) com fallback + log */
 document.addEventListener("click", async e => {
   if (!e.target || !e.target.classList) return;
   if (e.target.classList.contains("removeVirado")) return;
+
+  if (e.target.classList.contains("inc")) {
+    const tr = e.target.closest("tr");
+    const id = tr?.dataset?.id;
+    if (!id) return;
+
+    const cell = e.target.closest(".countcell");
+    const btn = e.target;
+
+    btn.classList.remove("hit");
+    cell?.classList.remove("hit");
+    void btn.offsetWidth;
+    btn.classList.add("hit");
+    cell?.classList.add("hit");
+    setTimeout(()=>{
+      btn.classList.remove("hit");
+      cell?.classList.remove("hit");
+    }, 650);
+
+    const sdrName = (tr.querySelector(".editable")?.innerText || "").trim();
+
+    const { data, error: selErr } = await withLoading(
+      supabaseClient
+        .from("ranking")
+        .select("id,leads_dia,leads_semana,leads_mes")
+        .eq("id", id)
+        .maybeSingle()
+    );
+
+    if (selErr || !data) {
+      alert("Erro ao buscar SDR: " + (selErr?.message || "Tente novamente"));
+      return;
+    }
+
+    const delta = 1;
+
+    const { error } = await withLoading(
+      supabaseClient
+        .from("ranking")
+        .update({
+          leads_dia: (data.leads_dia || 0) + delta,
+          leads_semana: (data.leads_semana || 0) + delta,
+          leads_mes: (data.leads_mes || 0) + delta
+        })
+        .eq("id", id)
+    );
+
+    if (error) {
+      alert("Erro ao somar lead: " + (error.message || ""));
+      return;
+    }
+
+    await logEvent({
+      action: "ranking_inc",
+      sdr: sdrName,
+      delta: delta,
+      period: "dia|semana|mes",
+      origin: "btn_inc"
+    });
+
+    lastUndo = {
+      id,
+      delta,
+      sdrName,
+      expiresAt: Date.now() + 6500
+    };
+
+    await withLoading(carregarRanking());
+    if (perfil === "admin" && activeView === "gestao") await withLoading(atualizarDashboardGestao());
+
+    toast("+1 lead — Desfazer", {
+      actionLabel: "Desfazer",
+      duration: 6500,
+      action: async () => {
+        const u = lastUndo;
+        await doUndoRanking(u);
+      }
+    });
+
+    return;
+  }
 
   if (e.target.classList.contains("remove")) {
     if (perfil !== "admin") return;
@@ -914,6 +1744,7 @@ document.addEventListener("click", async e => {
     const tr = e.target.closest("tr");
     if (!tr) return;
     const id = tr.dataset.id;
+    const sdrName = (tr.querySelector(".editable")?.innerText || "").trim();
 
     const { error } = await withLoading(supabaseClient.from("ranking").delete().eq("id", id));
 
@@ -930,6 +1761,14 @@ document.addEventListener("click", async e => {
       }
     }
 
+    await logEvent({
+      action: "ranking_remove",
+      sdr: sdrName,
+      delta: 0,
+      period: "dia|semana|mes",
+      origin: "btn_remove"
+    });
+
     await withLoading(carregarRanking());
     toast("Removido");
   }
@@ -941,6 +1780,13 @@ const atualizarNomeDebounced = debounce(async (id, nome) => {
     alert("Erro ao atualizar nome: " + (error.message || ""));
     return;
   }
+  await logEvent({
+    action: "ranking_rename",
+    sdr: nome,
+    delta: 0,
+    period: "dia|semana|mes",
+    origin: "inline_edit"
+  });
   await withLoading(carregarRanking());
   toast("Nome atualizado");
 }, 250);
@@ -1035,6 +1881,16 @@ async function adicionarVirado() {
 
     if (error) return alert("Erro ao adicionar: " + (error.message || "Tente novamente"));
 
+    await logEvent({
+      action: "virado_add",
+      sdr,
+      delta: 1,
+      period: "mes",
+      origin: "virado_form",
+      valor: valor,
+      data_virou: data_virou
+    });
+
     sdrViradoInput.value = "";
     linkRdViradoInput.value = "";
     if (dataAgendouInput) dataAgendouInput.value = "";
@@ -1084,6 +1940,8 @@ async function carregarViradosResumo() {
 
   historicoTotal = viradosMes.length;
   atualizarPaginacao();
+
+  markUpdated();
 }
 
 function aplicarResumo(viradosMes) {
@@ -1159,6 +2017,7 @@ async function carregarViradosPagina() {
       : `<tr><td colspan="6" style="padding:12px; color:rgba(238,242,255,.60);">Sem registros.</td></tr>`;
 
   atualizarPaginacao();
+  markUpdated();
 }
 
 function atualizarPaginacao() {
@@ -1175,6 +2034,9 @@ document.addEventListener("click", async e => {
 
     const id = e.target.closest("tr")?.dataset?.id;
     if (!id) return;
+
+    const row = e.target.closest("tr");
+    const sdrName = (row?.children?.[0]?.innerText || "").trim();
 
     const { error } = await withLoading(supabaseClient.from("leads_virados").delete().eq("id", id));
 
@@ -1195,6 +2057,14 @@ document.addEventListener("click", async e => {
         return;
       }
     }
+
+    await logEvent({
+      action: "virado_remove",
+      sdr: sdrName,
+      delta: -1,
+      period: "mes",
+      origin: "btn_remove_virado"
+    });
 
     cacheMonthKey = null;
     await withLoading(carregarViradosResumo());
@@ -1244,6 +2114,413 @@ async function atualizarDashboardGestao(){
           <td style="width:140px; font-weight:900;">${fmtBRL(it.total)}</td>
         </tr>`).join("")
       : `<tr><td colspan="4" style="padding:12px; color:rgba(238,242,255,.60);">Sem registros no mês.</td></tr>`;
+
+  await atualizarComparativosGestao();
+  await carregarAuditLog();
+}
+
+/* ✅ NOVO: Comparativos (Hoje vs Ontem / Semana vs passada / Mês vs passado) */
+function startOfDay(d){
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+function startOfWeek(d){
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = x.getDay(); // 0 domingo
+  const diff = (day === 0 ? -6 : 1 - day); // segunda como início
+  x.setDate(x.getDate() + diff);
+  x.setHours(0,0,0,0);
+  return x;
+}
+function startOfMonth(d){
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+function addDays(d, n){
+  const x = new Date(d);
+  x.setDate(x.getDate() + n);
+  return x;
+}
+function addMonths(d, n){
+  return new Date(d.getFullYear(), d.getMonth() + n, 1);
+}
+function isoDate(d){
+  return d.toISOString().slice(0,10);
+}
+function fmtDelta(cur, prev){
+  const c = Number(cur || 0);
+  const p = Number(prev || 0);
+  const diff = c - p;
+  const sign = diff > 0 ? "+" : "";
+  const pct = (p === 0) ? (c === 0 ? 0 : 100) : Math.round((diff / p) * 100);
+  const pctSign = pct > 0 ? "+" : "";
+  return { diff, sign, pct, pctSign };
+}
+
+async function sumLeadsEvents(startISO, endISO){
+  try{
+    const { data, error } = await supabaseClient
+      .from("ranking_events")
+      .select("*")
+      .gte("created_at", startISO)
+      .lt("created_at", endISO);
+
+    if (error || !Array.isArray(data)) return null;
+
+    let sum = 0;
+    for (const ev of data){
+      const a = String(ev.action || "");
+      if (a.startsWith("ranking_")){
+        const d = Number(ev.delta || 0);
+        if (!isNaN(d)) sum += d;
+      }
+    }
+    return sum;
+  }catch(e){
+    return null;
+  }
+}
+
+async function sumViradosRange(startISO, endISO){
+  try{
+    const { data, error } = await supabaseClient
+      .from("leads_virados")
+      .select("valor")
+      .gte("data_virou", startISO)
+      .lt("data_virou", endISO);
+
+    if (error || !Array.isArray(data)) return null;
+
+    let sum = 0;
+    for (const r of data){
+      sum += Number(r.valor || 0);
+    }
+    return sum;
+  }catch(e){
+    return null;
+  }
+}
+
+async function atualizarComparativosGestao(){
+  const now = new Date();
+
+  /* Leads: via ranking_events (created_at) */
+  const todayStart = startOfDay(now);
+  const tomorrowStart = addDays(todayStart, 1);
+  const yestStart = addDays(todayStart, -1);
+
+  const weekStart = startOfWeek(now);
+  const nextWeekStart = addDays(weekStart, 7);
+  const prevWeekStart = addDays(weekStart, -7);
+
+  const monthStart = startOfMonth(now);
+  const nextMonthStart = addMonths(monthStart, 1);
+  const prevMonthStart = addMonths(monthStart, -1);
+
+  const [leadsHoje, leadsOntem, leadsSemana, leadsSemanaPass, leadsMes, leadsMesPass] = await Promise.all([
+    sumLeadsEvents(todayStart.toISOString(), tomorrowStart.toISOString()),
+    sumLeadsEvents(yestStart.toISOString(), todayStart.toISOString()),
+    sumLeadsEvents(weekStart.toISOString(), nextWeekStart.toISOString()),
+    sumLeadsEvents(prevWeekStart.toISOString(), weekStart.toISOString()),
+    sumLeadsEvents(monthStart.toISOString(), nextMonthStart.toISOString()),
+    sumLeadsEvents(prevMonthStart.toISOString(), monthStart.toISOString())
+  ]);
+
+  const setCmp = (valueId, subId, cur, prev, labelPrev)=>{
+    const el = $(valueId);
+    const sub = $(subId);
+    if (!el || !sub) return;
+
+    if (cur === null || prev === null){
+      el.textContent = "—";
+      sub.textContent = "Sem dados";
+      return;
+    }
+    const d = fmtDelta(cur, prev);
+    el.textContent = String(cur);
+    sub.textContent = `${labelPrev}: ${prev} • Δ ${d.sign}${d.diff} (${d.pctSign}${d.pct}%)`;
+  };
+
+  setCmp("cmpLeadsHoje", "cmpLeadsHojeSub", leadsHoje, leadsOntem, "Ontem");
+  setCmp("cmpLeadsSemana", "cmpLeadsSemanaSub", leadsSemana, leadsSemanaPass, "Semana passada");
+  setCmp("cmpLeadsMes", "cmpLeadsMesSub", leadsMes, leadsMesPass, "Mês passado");
+
+  /* Faturamento: via leads_virados (data_virou) */
+  const todayISO = isoDate(todayStart);
+  const tomorrowISO = isoDate(tomorrowStart);
+  const yestISO = isoDate(yestStart);
+
+  const weekISO = isoDate(weekStart);
+  const nextWeekISO = isoDate(nextWeekStart);
+  const prevWeekISO = isoDate(prevWeekStart);
+
+  const monthISO = isoDate(monthStart);
+  const nextMonthISO = isoDate(nextMonthStart);
+  const prevMonthISO = isoDate(prevMonthStart);
+
+  const [fatHoje, fatOntem, fatSemana, fatSemanaPass, fatMes, fatMesPass] = await Promise.all([
+    sumViradosRange(todayISO, tomorrowISO),
+    sumViradosRange(yestISO, todayISO),
+    sumViradosRange(weekISO, nextWeekISO),
+    sumViradosRange(prevWeekISO, weekISO),
+    sumViradosRange(monthISO, nextMonthISO),
+    sumViradosRange(prevMonthISO, monthISO),
+  ]);
+
+  const setCmpMoney = (valueId, subId, cur, prev, labelPrev)=>{
+    const el = $(valueId);
+    const sub = $(subId);
+    if (!el || !sub) return;
+
+    if (cur === null || prev === null){
+      el.textContent = "—";
+      sub.textContent = "Sem dados";
+      return;
+    }
+    const d = fmtDelta(cur, prev);
+    el.textContent = fmtBRL(cur);
+    sub.textContent = `${labelPrev}: ${fmtBRL(prev)} • Δ ${d.sign}${fmtBRL(d.diff)} (${d.pctSign}${d.pct}%)`;
+  };
+
+  setCmpMoney("cmpFatHoje", "cmpFatHojeSub", fatHoje, fatOntem, "Ontem");
+  setCmpMoney("cmpFatSemana", "cmpFatSemanaSub", fatSemana, fatSemanaPass, "Semana passada");
+  setCmpMoney("cmpFatMes", "cmpFatMesSub", fatMes, fatMesPass, "Mês passado");
+}
+
+/* ✅ NOVO: Atividade recente */
+async function carregarAuditLog(){
+  const tbody = $("auditBody");
+  if (!tbody) return;
+
+  try{
+    const { data, error } = await supabaseClient
+      .from("ranking_events")
+      .select("*")
+      .order("created_at", { ascending:false })
+      .limit(20);
+
+    if (error || !Array.isArray(data)){
+      tbody.innerHTML = `<tr><td colspan="7" style="padding:12px; color:rgba(238,242,255,.60);">Sem dados.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.length ? data.map(ev=>{
+      const when = fmtDateTimeBR(ev.created_at || ev.created_client_at || "");
+      const who = (ev.actor_usuario || ev.actor_perfil || "—");
+      const act = (ev.action || "—");
+      const sdr = (ev.sdr || "—");
+      const delta = (typeof ev.delta === "number" || String(ev.delta||"").trim() !== "") ? String(ev.delta) : "—";
+      const period = (ev.period || "—");
+      const origin = (ev.origin || "—");
+      return `<tr>
+        <td style="width:150px">${escapeHtml(when)}</td>
+        <td style="width:110px">${escapeHtml(who)}</td>
+        <td style="width:140px">${escapeHtml(act)}</td>
+        <td>${escapeHtml(sdr)}</td>
+        <td style="width:90px; font-weight:900;">${escapeHtml(delta)}</td>
+        <td style="width:120px">${escapeHtml(period)}</td>
+        <td style="width:140px">${escapeHtml(origin)}</td>
+      </tr>`;
+    }).join("") : `<tr><td colspan="7" style="padding:12px; color:rgba(238,242,255,.60);">Sem eventos.</td></tr>`;
+  }catch(e){
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:12px; color:rgba(238,242,255,.60);">Sem dados.</td></tr>`;
+  }
+}
+
+/* ✅ NOVO: Exportar CSV */
+function downloadText(filename, text){
+  const blob = new Blob([text], { type:"text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
+}
+function toCSV(rows){
+  return rows.map(r => r.map(v => {
+    const s = String(v ?? "");
+    const needs = /[",\n;]/.test(s);
+    const val = s.replaceAll('"','""');
+    return needs ? `"${val}"` : val;
+  }).join(";")).join("\n");
+}
+
+async function exportRankingCSV(){
+  const data = Array.isArray(window.__rankingCache) ? window.__rankingCache : [];
+  const rows = [["nome","leads_dia","leads_semana","leads_mes"]];
+  for (const r of data){
+    rows.push([r.nome || "", r.leads_dia || 0, r.leads_semana || 0, r.leads_mes || 0]);
+  }
+  downloadText(`ranking_${new Date().toISOString().slice(0,10)}.csv`, toCSV(rows));
+}
+
+async function exportViradosCSV(){
+  const { startISO, endISO } = getMesRangeISO();
+  const { data, error } = await supabaseClient
+    .from("leads_virados")
+    .select("sdr,link_rd,data_agendou,data_virou,valor")
+    .gte("data_virou", startISO)
+    .lt("data_virou", endISO)
+    .order("data_virou", { ascending:false });
+
+  const rows = [["sdr","link_rd","data_agendou","data_virou","valor"]];
+  if (!error && Array.isArray(data)){
+    for (const v of data){
+      rows.push([v.sdr || "", v.link_rd || "", v.data_agendou || "", v.data_virou || "", v.valor || 0]);
+    }
+  }
+  downloadText(`virados_${monthKey()}.csv`, toCSV(rows));
+}
+
+async function exportAuditCSV(){
+  const { data, error } = await supabaseClient
+    .from("ranking_events")
+    .select("*")
+    .order("created_at", { ascending:false })
+    .limit(500);
+
+  const rows = [["created_at","actor_perfil","actor_usuario","action","sdr","delta","period","origin"]];
+  if (!error && Array.isArray(data)){
+    for (const ev of data){
+      rows.push([
+        ev.created_at || ev.created_client_at || "",
+        ev.actor_perfil || "",
+        ev.actor_usuario || "",
+        ev.action || "",
+        ev.sdr || "",
+        (typeof ev.delta === "number" ? ev.delta : (ev.delta ?? "")),
+        ev.period || "",
+        ev.origin || ""
+      ]);
+    }
+  }
+  downloadText(`atividades_${new Date().toISOString().slice(0,10)}.csv`, toCSV(rows));
+}
+
+async function exportRelatorioMes(){
+  const key = monthKey();
+
+  /* Ranking atual */
+  const rankRows = [["SECAO: RANKING (ATUAL)"],["nome","leads_dia","leads_semana","leads_mes"]];
+  const rdata = Array.isArray(window.__rankingCache) ? window.__rankingCache : [];
+  for (const r of rdata){
+    rankRows.push([r.nome || "", r.leads_dia || 0, r.leads_semana || 0, r.leads_mes || 0]);
+  }
+
+  /* Virados do mês */
+  const { startISO, endISO } = getMesRangeISO();
+  const { data: vdata } = await supabaseClient
+    .from("leads_virados")
+    .select("sdr,link_rd,data_agendou,data_virou,valor")
+    .gte("data_virou", startISO)
+    .lt("data_virou", endISO)
+    .order("data_virou", { ascending:false });
+
+  const virRows = [[""],["SECAO: VIRADOS (MES)"],["sdr","link_rd","data_agendou","data_virou","valor"]];
+  if (Array.isArray(vdata)){
+    for (const v of vdata){
+      virRows.push([v.sdr || "", v.link_rd || "", v.data_agendou || "", v.data_virou || "", v.valor || 0]);
+    }
+  }
+
+  /* Eventos do mês */
+  const mStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const mEnd = new Date(new Date().getFullYear(), new Date().getMonth()+1, 1);
+  const { data: edata } = await supabaseClient
+    .from("ranking_events")
+    .select("*")
+    .gte("created_at", mStart.toISOString())
+    .lt("created_at", mEnd.toISOString())
+    .order("created_at", { ascending:false })
+    .limit(2000);
+
+  const evRows = [[""],["SECAO: ATIVIDADES (MES)"],["created_at","actor_perfil","actor_usuario","action","sdr","delta","period","origin"]];
+  if (Array.isArray(edata)){
+    for (const ev of edata){
+      evRows.push([
+        ev.created_at || ev.created_client_at || "",
+        ev.actor_perfil || "",
+        ev.actor_usuario || "",
+        ev.action || "",
+        ev.sdr || "",
+        (typeof ev.delta === "number" ? ev.delta : (ev.delta ?? "")),
+        ev.period || "",
+        ev.origin || ""
+      ]);
+    }
+  }
+
+  const all = []
+    .concat(rankRows)
+    .concat(virRows)
+    .concat(evRows);
+
+  downloadText(`relatorio_${key}.csv`, toCSV(all));
+}
+
+/* bind export buttons */
+(function initExports(){
+  const b1 = $("btnCsvRanking");
+  const b2 = $("btnCsvVirados");
+  const b3 = $("btnCsvAudit");
+  const b4 = $("btnRelatorioMes");
+  const bOp = $("btnExportOperacao");
+
+  if (b1) b1.onclick = () => withLoading(exportRankingCSV());
+  if (b2) b2.onclick = () => withLoading(exportViradosCSV());
+  if (b3) b3.onclick = () => withLoading(exportAuditCSV());
+  if (b4) b4.onclick = () => withLoading(exportRelatorioMes());
+  if (bOp) bOp.onclick = () => withLoading(exportRankingCSV());
+})();
+
+/* ✅ REALTIME */
+let rtChannel = null;
+
+const refreshFromRealtime = debounce(async () => {
+  if (!perfil) return;
+
+  await withLoading((async () => {
+    await carregarRanking();
+
+    cacheMonthKey = null;
+    await carregarViradosResumo();
+
+    if (historicoOpen) await carregarViradosPagina();
+
+    if (perfil === "admin" && activeView === "gestao") {
+      await atualizarDashboardGestao();
+    }
+
+    markUpdated();
+  })());
+}, 350);
+
+function startRealtime(){
+  if (rtChannel) return;
+
+  rtChannel = supabaseClient
+    .channel("crm-realtime")
+    .on("postgres_changes", { event: "*", schema: "public", table: "ranking" }, () => {
+      refreshFromRealtime();
+    })
+    .on("postgres_changes", { event: "*", schema: "public", table: "leads_virados" }, () => {
+      refreshFromRealtime();
+    })
+    .on("postgres_changes", { event: "*", schema: "public", table: "ranking_events" }, () => {
+      if (perfil === "admin" && activeView === "gestao") refreshFromRealtime();
+    });
+
+  rtChannel.subscribe((status) => {
+    // status: SUBSCRIBED / TIMED_OUT / CLOSED / CHANNEL_ERROR
+  });
+
+  window.addEventListener("beforeunload", stopRealtime);
+}
+
+function stopRealtime(){
+  if (!rtChannel) return;
+  supabaseClient.removeChannel(rtChannel);
+  rtChannel = null;
 }
 
 /* BOOT */
@@ -1258,7 +2535,10 @@ nomeInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAdd").cli
 qtdInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAdd").click(); });
 sdrViradoInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAddVirado").click(); });
 valorViradoInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") $("btnAddVirado").click(); });
+
+
 </script>
+
+
 </body>
 </html>
-
